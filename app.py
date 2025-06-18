@@ -8,6 +8,7 @@ CORS(app)
 DEEPSEEK_API_KEY = "sk-9e4d66f85a1f4895aa8817096d68aa9c"
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
+
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
@@ -22,16 +23,21 @@ def chat():
         payload = {
             "model": "deepseek-chat",
             "messages": [
-                {"role": "system", "content": "أنت مساعد ذكي يتحدث اللغة العربية، ساعد المستخدم بأجوبة دقيقة ومبسطة."},
+                {"role": "system", "content": "أنت مساعد ذكي يتحدث اللغة العربية."},
                 {"role": "user", "content": user_message}
             ]
         }
 
         response = requests.post(DEEPSEEK_API_URL, headers=headers, json=payload)
         response.raise_for_status()
+
         result = response.json()
         reply = result["choices"][0]["message"]["content"]
         return jsonify({"reply": reply})
 
     except Exception as e:
+        # اطبع الخطأ في اللوج
+        import traceback
+        traceback.print_exc()
+
         return jsonify({"error": f"خطأ في الخادم: {str(e)}"}), 500
